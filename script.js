@@ -219,9 +219,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- MODAL & QRIS INTEGRATION LOGIC ---
-    let pollingInterval;
-
+    // --- MODAL & QRIS SEMI-OTOMATIS (WHATSAPP) ---
     const attachCardEvents = () => {
         document.querySelectorAll('.card-btn').forEach(btn => {
             btn.addEventListener('click', (e) => openModal(parseInt(e.target.dataset.id)));
@@ -250,105 +248,52 @@ document.addEventListener('DOMContentLoaded', () => {
         qrisArea.style.display = 'none';
         qrisImage.style.display = 'none';
 
-        // Proses klik tombol bayar
-        buyBtn.onclick = async () => {
+        // Proses klik tombol bayar (Alur Semi-Otomatis WA)
+        buyBtn.onclick = () => {
             buyBtn.style.display = 'none';
             qrisArea.style.display = 'block';
-            qrisLoader.style.display = 'block';
-            qrisStatus.textContent = 'Membuat QR Code...';
-            qrisStatus.style.color = '#ffcc00';
-            qrisTimer.textContent = '';
+            qrisLoader.style.display = 'none'; 
+            
+            // Memanggil gambar statis QRIS aslimu
+            qrisImage.src = 'qris-asli.png';
+            qrisImage.style.display = 'block';
+            
+            qrisStatus.textContent = 'Scan QRIS untuk membayar';
+            qrisStatus.style.color = '#fff';
+            qrisTimer.textContent = 'Mendukung BCA, OVO, Dana, GoPay, Spay, dll.';
 
-            try {
-                // Tembak API Backend C# .NET milikmu di sini
-                /*
-                const response = await fetch('https://api.sxrstore.com/create-qris', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ productId: product.id, amount: product.price })
-                });
-                const data = await response.json();
-                */
-
-                // Simulasi memanggil API (Hapus ini jika API C# sudah siap)
-                await new Promise(r => setTimeout(r, 1500));
-                
-                // Data simulasi balasan dari server
-                const data = { 
-                    qrUrl: 'https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg', 
-                    invoiceId: 'INV-' + Math.floor(Math.random() * 100000)
-                };
-
-                // Tampilkan QR Code di layar
-                qrisLoader.style.display = 'none';
-                qrisImage.src = data.qrUrl;
-                qrisImage.style.display = 'block';
-                qrisStatus.textContent = 'Menunggu Pembayaran...';
-                qrisTimer.textContent = 'Scan menggunakan BCA, OVO, Dana, GoPay, dll.';
-
-                // Jalankan fungsi polling untuk mengecek apakah user sudah bayar
-                checkPaymentStatus(data.invoiceId, product.name);
-
-            } catch (error) {
-                qrisLoader.style.display = 'none';
-                qrisStatus.textContent = 'Gagal memuat QRIS. Coba lagi nanti.';
-                qrisStatus.style.color = 'var(--color-primary)';
-                buyBtn.style.display = 'flex';
-                buyBtn.textContent = 'Coba Lagi';
+            // Membuat tombol konfirmasi WhatsApp bergaya native
+            let waBtn = document.getElementById('btn-konfirmasi-wa');
+            if (!waBtn) {
+                waBtn = document.createElement('button');
+                waBtn.id = 'btn-konfirmasi-wa';
+                waBtn.className = 'btn-primary ripple glow-btn';
+                waBtn.style.marginTop = '20px';
+                waBtn.style.width = '100%';
+                waBtn.style.backgroundColor = '#25D366'; // Hijau WA
+                waBtn.style.boxShadow = '0 4px 15px rgba(37, 211, 102, 0.2)';
+                waBtn.style.color = '#fff';
+                waBtn.textContent = 'Kirim Bukti Pembayaran';
+                qrisArea.appendChild(waBtn);
             }
+
+            // Menyusun format pesan WhatsApp dinamis berdasarkan produk
+            const nomorWA = "6281543333745"; 
+            const teksPesan = `Halo SXR, saya sudah transfer untuk pembelian produk *${product.name}* seharga *${formatCurrency(product.price)}*. Berikut lampiran bukti pembayarannya.`;
+            
+            waBtn.onclick = () => {
+                window.open(`https://wa.me/${nomorWA}?text=${encodeURIComponent(teksPesan)}`, '_blank');
+            };
         };
 
         modalEl.classList.add('active');
         document.body.style.overflow = 'hidden';
     };
 
-    // Fungsi Polling untuk mengecek status pembayaran ke backend secara berkala
-    const checkPaymentStatus = (invoiceId, productName) => {
-        clearInterval(pollingInterval);
-        let attempts = 0;
-        
-        pollingInterval = setInterval(async () => {
-            attempts++;
-            if(attempts > 60) { // Timeout setelah 3 menit (60 * 3 detik)
-                clearInterval(pollingInterval);
-                document.getElementById('qris-status').textContent = 'Waktu pembayaran habis.';
-                document.getElementById('qris-status').style.color = 'var(--color-primary)';
-                return;
-            }
-
-            // Tembak endpoint C# untuk cek status ke database
-            /*
-            const res = await fetch(`https://api.sxrstore.com/check-status/${invoiceId}`);
-            const statusData = await res.json();
-            let isPaid = statusData.isPaid;
-            */
-
-            // Simulasi pembayaran sukses pada detik ke-9 (Hapus baris ini nanti)
-            let isPaid = (attempts === 3); 
-
-            if (isPaid) {
-                clearInterval(pollingInterval);
-                document.getElementById('qris-image').style.display = 'none';
-                document.getElementById('qris-timer').style.display = 'none';
-                document.getElementById('qris-status').textContent = '✅ Pembayaran Berhasil!';
-                document.getElementById('qris-status').style.color = '#00ff88';
-                
-                showToast(`Pembayaran ${productName} berhasil! Menyiapkan produk...`);
-                
-                // Redirect ke halaman download atau area eksekusi produk
-                setTimeout(() => {
-                    // window.location.href = `/download.html?invoice=${invoiceId}`;
-                    showToast("Simulasi selesai. Di sini user diarahkan ke link download.");
-                }, 2000);
-            }
-        }, 3000); // Mengecek ke server setiap 3 detik
-    };
-
     const closeModal = () => {
         if(modalEl) { 
             modalEl.classList.remove('active'); 
             document.body.style.overflow = ''; 
-            clearInterval(pollingInterval); // Hentikan pengecekan jika modal ditutup
         }
     };
 
