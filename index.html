@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SXR STORE | Premium Digital Products</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <canvas id="spider-canvas"></canvas>
+
+    <div class="scroll-progress" id="scroll-progress"></div>
+
+    <div id="loader" class="loader-container">
+        <div class="loader-brand">
+            <div class="loader-spinner"></div>
+            <h2 class="loader-text">SXR<span>STORE</span></h2>
+        </div>
+        <div class="loader-progress-bar"><div class="loader-progress"></div></div>
+    </div>
+
+    <div class="donate-bar">
+        <div class="container donate-content">
+            <span class="donate-text">❤️ SUPPORT SXR STORE: Dukung pengembangan project melalui Sociabuzz.</span>
+            <a href="https://sociabuzz.com/skygpx/tribe" target="_blank" class="btn-donate ripple">❤️ DONATE NOW</a>
+        </div>
+    </div>
+
+    <div class="announcement-bar">
+        <div class="marquee">
+            <span>🔥 OPEN PO DRAGXIT OB54 TELAH DIBUKA &nbsp; | &nbsp; 👑 UPGRADE PENGALAMAN DIGITALMU BERSAMA SXR STORE &nbsp; | &nbsp; ⚡ BUILT FOR BETTER PERFORMANCE &nbsp; | &nbsp; 🔥 OPEN PO DRAGXIT OB54 TELAH DIBUKA</span>
+        </div>
+    </div>
+
+    <header class="navbar" id="navbar">
+        <div class="container nav-content">
+            <a href="#" class="brand-logo">SXR<span>STORE</span></a>
+            
+            <nav class="nav-menu" id="nav-menu">
+                <a href="#home" class="nav-link">Home</a>
+                <a href="#products" class="nav-link">Products</a>
+                <a href="#contact" class="nav-link">Contact</a>
+                <a href="#faq" class="nav-link">FAQ</a>
+            </nav>
+
+            <div class="nav-tools">
+                <div class="search-wrapper">
+                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" id="search-input" class="search-input" placeholder="Cari produk premium..." autocomplete="off">
+                    <div id="search-results" class="search-results"></div>
+                </div>
+                <button class="btn-outline ripple" id="btn-login">Login</button>
+                <button class="btn-outline ripple" id="btn-cart">Cart</button>
+            </div>
+
+            <button class="menu-toggle ripple" id="menu-toggle" aria-label="Toggle Menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+        </div>
+        
+        <div class="mobile-menu" id="mobile-menu">
+            <a href="#home" class="mobile-link">Home</a>
+            <a href="#products" class="mobile-link">Products</a>
+            <a href="#contact" class="mobile-link">Contact</a>
+            <a href="#faq" class="mobile-link">FAQ</a>
+        </div>
+    </header>
+
+    <main>
+        <section id="home" class="hero">
+            <div class="hero-glow"></div>
+            <div class="hero-rays"></div>
+            <div class="container hero-content">
+                <span class="tagline reveal">TRUSTED BY MOBILE GAMERS</span>
+                <h1 class="hero-title">SXR STORE</h1>
+                <p class="hero-desc reveal">Premium Digital Products</p>
+                <div class="hero-actions reveal">
+                    <a href="#products" class="btn-primary ripple glow-btn">Explore Collection</a>
+                    <a href="#contact" class="btn-outline ripple">Hubungi Kami</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="promo-banner reveal">
+            <div class="container">
+                <div class="promo-content">
+                    <span class="promo-badge">HOT RELEASE</span>
+                    <h2 class="promo-title">DRAGXIT OB54 SXRSETTINGS</h2>
+                    <p class="promo-desc">The ultimate performance upgrade is now available for Pre-Order.</p>
+                    <a href="#products" class="btn-primary ripple glow-btn" style="padding: 10px 30px; font-size: 0.95rem;">Pre-Order Now</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="products" class="section">
+            <div class="container">
+                <div class="section-header reveal">
+                    <div>
+                        <h2 class="section-title">Katalog Premium</h2>
+                        <p class="section-subtitle">🔥 Featured Products | ⭐ Best Seller | 🆕 New Arrival</p>
+                    </div>
+                    <div class="filters" id="filters">
+                        <button class="filter-btn active ripple" data-filter="all">All</button>
+                        <button class="filter-btn ripple" data-filter="android">Android</button>
+                        <button class="filter-btn ripple" data-filter="iphone">iPhone</button>
+                        <button class="filter-btn ripple" data-filter="panel">App Panel</button>
+                    </div>
+                </div>
+
+                <div class="product-grid" id="product-grid">
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="section reveal" style="background: rgba(10,10,10,0.5); border-top: 1px solid rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05);">
+            <div class="container contact-grid">
+                <div class="social-box">
+                    <h2 class="section-title">Connect With Us</h2>
+                    <p class="section-subtitle">Ikuti perkembangan terbaru SXR STORE.</p>
+                    <div class="social-links">
+                        <a href="https://whatsapp.com/channel/0029VajD0Cn90x2mGjjTyM0J" target="_blank" class="social-card ripple">
+                            <span>📱</span>
+                            <div>
+                                <h4>WhatsApp Channel</h4>
+                                <p>Join the community</p>
+                            </div>
+                        </a>
+                        <a href="https://www.tiktok.com/@sxrsettingofficial" target="_blank" class="social-card ripple">
+                            <span>🎵</span>
+                            <div>
+                                <h4>TikTok</h4>
+                                <p>@sxrsettingofficial</p>
+                            </div>
+                        </a>
+                        <a href="https://youtube.com/@skyxiters1?si=2LdkYtvCD8J6rkZ7" target="_blank" class="social-card ripple">
+                            <span>▶️</span>
+                            <div>
+                                <h4>YouTube</h4>
+                                <p>@skyxiters1</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="contact-box">
+                    <h2 class="section-title">Butuh Bantuan?</h2>
+                    <p class="section-subtitle">Admin kami siap membantu Anda 24/7.</p>
+                    <div class="contact-card">
+                        <h3>WhatsApp Admin</h3>
+                        <p class="wa-number">0821-6553-262</p>
+                        <a href="https://wa.me/628216553262" target="_blank" class="btn-primary ripple glow-btn w-100 mt-3">💬 Chat WhatsApp</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="faq" class="section reveal">
+            <div class="container faq-container">
+                <h2 class="section-title text-center">Frequently Asked Questions</h2>
+                <p class="section-subtitle text-center mb-5">Pertanyaan yang sering diajukan pelanggan.</p>
+                <div class="accordion" id="accordion">
+                    <div class="accordion-item">
+                        <button class="accordion-header">Bagaimana sistem pembayaran otomatisnya? <span class="accordion-icon">+</span></button>
+                        <div class="accordion-body">
+                            <p>Setelah memilih produk, klik "Buy Now". Anda akan diarahkan ke pop-up modal, lalu klik "Bayar Otomatis via QRIS". Scan QR code yang muncul menggunakan e-wallet atau m-banking. Produk akan dikirim otomatis setelah pembayaran berhasil.</p>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <button class="accordion-header">Apakah produk dijamin aman? <span class="accordion-icon">+</span></button>
+                        <div class="accordion-body">
+                            <p>Ya, seluruh ekosistem produk digital SXR dikembangkan dengan standar keamanan tinggi dan profesionalisme.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <h3>SXR<span>STORE</span></h3>
+                <p>Premium Digital Products crafted for performance, elegance, and stability.</p>
+            </div>
+            <div class="footer-links">
+                <h4>Quick Links</h4>
+                <a href="#home">Home</a>
+                <a href="#products">Products</a>
+                <a href="#faq">FAQ</a>
+                <a href="#contact">Contact</a>
+            </div>
+            <div class="footer-links">
+                <h4>Social & Support</h4>
+                <a href="https://wa.me/628216553262" target="_blank">WhatsApp</a>
+                <a href="https://www.tiktok.com/@sxrsettingofficial" target="_blank">TikTok</a>
+                <a href="https://youtube.com/@skyxiters1?si=2LdkYtvCD8J6rkZ7" target="_blank">YouTube</a>
+                <a href="https://whatsapp.com/channel/0029VajD0Cn90x2mGjjTyM0J" target="_blank">WhatsApp Channel</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>Copyright &copy; 2026 SXR STORE. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <div class="live-panel float-anim" id="live-panel">
+        <button class="close-live" id="close-live">&times;</button>
+        <div class="live-badge">🔴 LIVE TIKTOK</div>
+        <h4>Support Project</h4>
+        <p>❤️ Donate via Sociabuzz</p>
+        <a href="https://sociabuzz.com/skygpx/tribe" target="_blank" class="btn-primary ripple btn-sm w-100 glow-btn" style="margin-top: 10px; font-size:0.8rem; padding: 8px;">DONATE SEKARANG</a>
+    </div>
+
+    <a href="https://wa.me/628216553262" target="_blank" class="float-wa ripple glow-btn" aria-label="WhatsApp Support">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    </a>
+    <button id="btn-top" class="float-top ripple glow-btn" aria-label="Scroll to top">↑</button>
+
+    <!-- UPDATE: MODAL DENGAN AREA QRIS -->
+    <div id="modal" class="modal">
+        <div class="modal-dialog">
+            <button class="modal-close" id="modal-close">&times;</button>
+            <div class="modal-content">
+                <div class="modal-image">
+                    <img id="modal-img" src="" alt="Product">
+                </div>
+                <div class="modal-details">
+                    <span class="modal-category" id="modal-cat"></span>
+                    <h3 class="modal-title" id="modal-name"></h3>
+                    <div class="modal-price" id="modal-price"></div>
+                    
+                    <button id="modal-buy" class="btn-primary ripple glow-btn w-100">⚡ Bayar Otomatis via QRIS</button>
+                    
+                    <div id="qris-area" style="display: none; text-align: center; margin-top: 20px;">
+                        <div id="qris-loader" class="loader-spinner" style="margin: 0 auto; width: 30px; height: 30px;"></div>
+                        <img id="qris-image" src="" alt="QRIS Code" style="display: none; max-width: 200px; margin: 0 auto; border-radius: 12px; border: 2px solid var(--color-border); padding: 10px; background: #fff;">
+                        <p id="qris-status" style="margin-top: 15px; font-size: 0.9rem; font-weight: 600; color: #ffcc00;">Memuat QRIS...</p>
+                        <p id="qris-timer" style="font-size: 0.8rem; color: var(--color-text-muted); margin-top: 5px;"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-area" class="toast-area"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
