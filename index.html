@@ -8,11 +8,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
     <link rel="stylesheet" href="style.css">
+
+    <script type="module" src="https://unpkg.com/@splinetool/viewer@1.9.5/build/spline-viewer.js"></script>
 </head>
 <body>
-    <canvas id="spider-canvas"></canvas>
+    <spline-viewer id="spline-bg" url="https://prod.spline.design/https://my.spline.design/skullfogcopycopy-mQRXKHGTscDSQgC3i5WHiRsQ//scene.splinecode"></spline-viewer>
 
     <div class="scroll-progress" id="scroll-progress"></div>
 
@@ -114,8 +115,7 @@
                     </div>
                 </div>
 
-                <div class="product-grid" id="product-grid">
-                </div>
+                <div class="product-grid" id="product-grid"></div>
             </div>
         </section>
 
@@ -222,7 +222,6 @@
     </a>
     <button id="btn-top" class="float-top ripple glow-btn" aria-label="Scroll to top">↑</button>
 
-    <!-- UPDATE: MODAL DENGAN AREA QRIS -->
     <div id="modal" class="modal">
         <div class="modal-dialog">
             <button class="modal-close" id="modal-close">&times;</button>
