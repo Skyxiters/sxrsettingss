@@ -278,7 +278,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // Menyusun format pesan WhatsApp dinamis berdasarkan produk
-            const nomorWA = "6281543333745"; 
+            const nomorWA = "628216553262"; 
             const teksPesan = `Halo SXR, saya sudah transfer untuk pembelian produk *${product.name}* seharga *${formatCurrency(product.price)}*. Berikut lampiran bukti pembayarannya.`;
             
             waBtn.onclick = () => {
