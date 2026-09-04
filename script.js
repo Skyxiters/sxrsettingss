@@ -1,11 +1,4 @@
-/*!
- * Copyright © 2026 SXR STORE
- * Unauthorized copying or redistribution is prohibited.
- */
-
 document.addEventListener('DOMContentLoaded', () => {
-
-    // --- DATA PRODUK ---
     const DB_PRODUCTS = [
         { id: 1, name: "DragXIT Lite", category: "Android", price: 20000, img: "lite.png", badge: "" },
         { id: 2, name: "DragXIT Basic", category: "Android", price: 50000, img: "basic.png", badge: "" },
@@ -48,78 +41,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return "all";
     };
 
-    // --- SPIDER WEB CANVAS ---
-    const initCanvas = () => {
-        const canvas = document.getElementById('spider-canvas');
-        if(!canvas) return;
-        const ctx = canvas.getContext('2d');
-        let width = canvas.width = window.innerWidth;
-        let height = canvas.height = window.innerHeight;
-        let particles = [];
-        let mouse = { x: null, y: null, radius: 140 };
-
-        window.addEventListener('mousemove', (e) => { mouse.x = e.x; mouse.y = e.y; });
-        window.addEventListener('mouseout', () => { mouse.x = null; mouse.y = null; });
-        window.addEventListener('resize', () => { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; });
-
-        for (let i = 0; i < 80; i++) {
-            particles.push({
-                x: Math.random() * width, y: Math.random() * height,
-                vx: (Math.random() - 0.5) * 0.4, vy: (Math.random() - 0.5) * 0.4,
-                radius: Math.random() > 0.8 ? 1.5 : 0.8, isRed: Math.random() > 0.85 
-            });
-        }
-
-        const animateCanvas = () => {
-            ctx.clearRect(0, 0, width, height);
-            for (let i = 0; i < particles.length; i++) {
-                let p = particles[i];
-                p.x += p.vx; p.y += p.vy;
-
-                if (p.x < 0 || p.x > width) p.vx *= -1;
-                if (p.y < 0 || p.y > height) p.vy *= -1;
-
-                if (mouse.x != null && mouse.y != null) {
-                    let dx = mouse.x - p.x; let dy = mouse.y - p.y;
-                    let dist = Math.sqrt(dx * dx + dy * dy);
-                    if (dist < mouse.radius) {
-                        const forceDirectionX = dx / dist; const forceDirectionY = dy / dist;
-                        const force = (mouse.radius - dist) / mouse.radius;
-                        p.x -= forceDirectionX * force * 1.5; p.y -= forceDirectionY * force * 1.5;
-                    }
-                }
-
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-                ctx.fillStyle = p.isRed ? 'rgba(229, 9, 20, 0.7)' : 'rgba(255, 255, 255, 0.3)';
-                ctx.fill();
-
-                for (let j = i + 1; j < particles.length; j++) {
-                    let p2 = particles[j];
-                    let dx = p.x - p2.x; let dy = p.y - p2.y;
-                    let dist = Math.sqrt(dx*dx + dy*dy);
-                    if (dist < 120) {
-                        ctx.beginPath();
-                        ctx.strokeStyle = `rgba(255, 255, 255, ${0.15 - dist/1200})`; 
-                        ctx.lineWidth = 0.6; ctx.moveTo(p.x, p.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
-                    }
-                }
-                if (mouse.x != null && mouse.y != null) {
-                    let dx = p.x - mouse.x; let dy = p.y - mouse.y;
-                    let dist = Math.sqrt(dx*dx + dy*dy);
-                    if (dist < 130) {
-                        ctx.beginPath();
-                        ctx.strokeStyle = `rgba(229, 9, 20, ${0.2 - dist/1300})`; 
-                        ctx.lineWidth = 0.8; ctx.moveTo(p.x, p.y); ctx.lineTo(mouse.x, mouse.y); ctx.stroke();
-                    }
-                }
-            }
-            requestAnimationFrame(animateCanvas);
-        };
-        animateCanvas();
-    };
-
-    // --- RENDER & FILTER ---
     const renderProducts = (dataset) => {
         if (!gridEl) return;
         gridEl.innerHTML = '';
@@ -179,7 +100,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // --- SEARCH LOGIC ---
     if (searchInput && searchResults) {
         searchInput.addEventListener('input', (e) => {
             const query = e.target.value.toLowerCase().trim();
@@ -219,7 +139,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- MODAL & QRIS SEMI-OTOMATIS (WHATSAPP) ---
     const attachCardEvents = () => {
         document.querySelectorAll('.card-btn').forEach(btn => {
             btn.addEventListener('click', (e) => openModal(parseInt(e.target.dataset.id)));
@@ -243,26 +162,24 @@ document.addEventListener('DOMContentLoaded', () => {
         const qrisStatus = document.getElementById('qris-status');
         const qrisTimer = document.getElementById('qris-timer');
 
-        // Reset state modal saat dibuka
         buyBtn.style.display = 'flex';
         qrisArea.style.display = 'none';
         qrisImage.style.display = 'none';
 
-        // Proses klik tombol bayar (Alur Semi-Otomatis WA)
         buyBtn.onclick = () => {
             buyBtn.style.display = 'none';
             qrisArea.style.display = 'block';
-            qrisLoader.style.display = 'none'; 
+            if (qrisLoader) qrisLoader.style.display = 'none'; 
             
-            // Memanggil gambar statis QRIS aslimu
             qrisImage.src = 'qris-asli.png';
             qrisImage.style.display = 'block';
             
-            qrisStatus.textContent = 'Scan QRIS untuk membayar';
-            qrisStatus.style.color = '#fff';
-            qrisTimer.textContent = 'Mendukung BCA, OVO, Dana, GoPay, Spay, dll.';
+            if (qrisStatus) {
+                qrisStatus.textContent = 'Scan QRIS untuk membayar';
+                qrisStatus.style.color = '#fff';
+            }
+            if (qrisTimer) qrisTimer.textContent = 'Mendukung BCA, OVO, Dana, GoPay, Spay, dll.';
 
-            // Membuat tombol konfirmasi WhatsApp bergaya native
             let waBtn = document.getElementById('btn-konfirmasi-wa');
             if (!waBtn) {
                 waBtn = document.createElement('button');
@@ -270,14 +187,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 waBtn.className = 'btn-primary ripple glow-btn';
                 waBtn.style.marginTop = '20px';
                 waBtn.style.width = '100%';
-                waBtn.style.backgroundColor = '#25D366'; // Hijau WA
+                waBtn.style.backgroundColor = '#25D366';
                 waBtn.style.boxShadow = '0 4px 15px rgba(37, 211, 102, 0.2)';
                 waBtn.style.color = '#fff';
                 waBtn.textContent = 'Kirim Bukti Pembayaran';
                 qrisArea.appendChild(waBtn);
             }
 
-            // Menyusun format pesan WhatsApp dinamis berdasarkan produk
             const nomorWA = "628216553262"; 
             const teksPesan = `Halo SXR, saya sudah transfer untuk pembelian produk *${product.name}* seharga *${formatCurrency(product.price)}*. Berikut lampiran bukti pembayarannya.`;
             
@@ -292,8 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const closeModal = () => {
         if(modalEl) { 
-            const modalContent = modalEl.querySelector('.modal-content');
-            // Logika Bottom Sheet (Mobile Only)
+            const modalContent = modalEl.querySelector('.modal-dialog');
             if (window.innerWidth <= 768 && modalContent) {
                 modalContent.style.transform = 'translateY(100%)';
                 setTimeout(() => {
@@ -309,9 +224,8 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     if (modalCloseBtn) modalCloseBtn.addEventListener('click', closeModal);
-    if (modalEl) modalEl.addEventListener('click', (e) => { if (e.target === modalEl) closeModal(); });
+    if (modalEl) modalEl.addEventListener('click', (e) => { if (e.target === modalEl || e.target.classList.contains('modal-dialog')) closeModal(); });
 
-    // --- OTHER UI LOGIC ---
     const closeLiveBtn = document.getElementById('close-live');
     if (closeLiveBtn) closeLiveBtn.addEventListener('click', () => { document.getElementById('live-panel').style.display = 'none'; });
 
@@ -386,26 +300,14 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 400); }, 3000);
     };
 
-    /* ==========================================================================
-       SECURITY & PROTECTION MODULE
-       ========================================================================== */
-       
-    document.addEventListener('contextmenu', (e) => {
-        e.preventDefault();
-    });
+    document.addEventListener('contextmenu', (e) => { e.preventDefault(); });
 
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'F12' || e.keyCode === 123) {
-            e.preventDefault();
-        }
+        if (e.key === 'F12' || e.keyCode === 123) e.preventDefault();
         if (e.ctrlKey) {
             const key = e.key.toLowerCase();
-            if (key === 'u' || key === 's') {
-                e.preventDefault();
-            }
-            if (e.shiftKey && (key === 'i' || key === 'c' || key === 'j')) {
-                e.preventDefault();
-            }
+            if (key === 'u' || key === 's') e.preventDefault();
+            if (e.shiftKey && (key === 'i' || key === 'c' || key === 'j')) e.preventDefault();
         }
     });
 
@@ -434,8 +336,6 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('resize', detectDevTools);
     setInterval(detectDevTools, 1500);
 
-    // --- INITIALIZATION ---
-    initCanvas(); 
     attachRippleEvents(document);
 
     setTimeout(() => {
@@ -448,5 +348,4 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 600);
         }
     }, 1500); 
-
 });
