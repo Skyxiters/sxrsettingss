@@ -17,14 +17,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const gridEl = document.getElementById('product-grid');
     const filterBtns = document.querySelectorAll('.filter-btn');
-    const searchInput = document.getElementById('search-input');
-    const searchResults = document.getElementById('search-results');
     const modalEl = document.getElementById('modal');
     const modalCloseBtn = document.getElementById('modal-close');
-    const navEl = document.getElementById('navbar');
     const loaderEl = document.getElementById('loader');
     
-    // Audio Context API (Sensory tick sound)
+    // Audio Context API & Haptic
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     const playFeedback = () => {
         if (navigator.vibrate) navigator.vibrate(30);
@@ -42,45 +39,45 @@ document.addEventListener('DOMContentLoaded', () => {
         osc.stop(audioCtx.currentTime + 0.05);
     };
 
+    // Custom Pull-to-Refresh
+    let ptrStartY = 0;
+    const ptrEl = document.getElementById('ptr-container');
+    document.addEventListener('touchstart', (e) => {
+        if (window.scrollY === 0) ptrStartY = e.touches[0].clientY;
+    }, {passive: true});
+    
+    document.addEventListener('touchmove', (e) => {
+        if (ptrStartY && window.scrollY === 0) {
+            let dy = e.touches[0].clientY - ptrStartY;
+            if (dy > 0) {
+                if (dy > 80) dy = 80;
+                ptrEl.style.height = dy + 'px';
+                ptrEl.style.opacity = dy / 80;
+            }
+        }
+    }, {passive: true});
+    
+    document.addEventListener('touchend', () => {
+        if (ptrStartY) {
+            if (parseInt(ptrEl.style.height) >= 60) {
+                playFeedback();
+                ptrEl.innerHTML = '<div class="loader-spinner" style="width:24px; height:24px; border-width:2px;"></div>';
+                setTimeout(() => window.location.reload(), 600);
+            } else {
+                ptrEl.style.height = '0px';
+                ptrEl.style.opacity = '0';
+            }
+            ptrStartY = 0;
+        }
+    });
+
     const formatCurrency = (amount) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(amount);
     const mapCategoryKey = (c) => c === "Android" ? "android" : c === "iPhone" ? "iphone" : c === "App Panel" ? "panel" : "all";
-
-    const initCanvas = () => {
-        const canvas = document.getElementById('spider-canvas');
-        if (!canvas) return;
-        const ctx = canvas.getContext('2d');
-        let w = canvas.width = window.innerWidth;
-        let h = canvas.height = window.innerHeight;
-        let stars = [];
-        for (let i = 0; i < 400; i++) stars.push({ x: Math.random() * w - w / 2, y: Math.random() * h - h / 2, z: Math.random() * w, size: Math.random() * 1.5 });
-        
-        const animateCanvas = () => {
-            ctx.fillStyle = 'rgba(5, 5, 5, 0.4)';
-            ctx.fillRect(0, 0, w, h);
-            const cx = w / 2; const cy = h / 2;
-            for (let i = 0; i < stars.length; i++) {
-                let star = stars[i];
-                star.z -= 1.5;
-                if (star.z <= 0) { star.x = Math.random() * w - cx; star.y = Math.random() * h - cy; star.z = w; }
-                let k = 150.0 / star.z;
-                let px = star.x * k + cx; let py = star.y * k + cy;
-                if (px >= 0 && px <= w && py >= 0 && py <= h) {
-                    ctx.beginPath();
-                    ctx.arc(px, py, star.size * k, 0, Math.PI * 2);
-                    ctx.fillStyle = `rgba(0, 255, 255, ${1 - star.z / w})`;
-                    ctx.fill();
-                }
-            }
-            requestAnimationFrame(animateCanvas);
-        };
-        window.addEventListener('resize', () => { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; });
-        animateCanvas();
-    };
 
     const renderSkeletons = () => {
         if (!gridEl) return;
         gridEl.innerHTML = '';
-        for(let i=0; i<8; i++) {
+        for(let i=0; i<6; i++) {
             gridEl.innerHTML += `
                 <div class="card skeleton-card">
                     <div class="skeleton skeleton-img"></div>
@@ -99,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         dataset.forEach(item => {
             const card = document.createElement('div');
-            card.className = 'card fade-anim glow-hover';
+            card.className = 'card fade-anim';
             card.setAttribute('data-category', mapCategoryKey(item.category));
             card.innerHTML = `
                 ${item.badge ? `<div class="card-badge">${item.badge}</div>` : ''}
@@ -111,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <h3 class="card-title">${item.name}</h3>
                     <div class="card-specs"><span>${item.specs}</span></div>
                     <div class="card-price">${formatCurrency(item.price)}</div>
-                    <button class="btn-primary ripple glow-btn card-btn" data-id="${item.id}">Buy Now</button>
+                    <button class="btn-primary ripple card-btn" data-id="${item.id}">Buy Now</button>
                 </div>
             `;
             gridEl.appendChild(card);
@@ -131,6 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const filterValue = e.target.dataset.filter;
             
             renderSkeletons();
+            gridEl.scrollLeft = 0; 
             setTimeout(() => {
                 const filtered = filterValue === 'all' ? DB_PRODUCTS : DB_PRODUCTS.filter(p => mapCategoryKey(p.category) === filterValue);
                 renderProducts(filtered);
@@ -147,6 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('modal-price').textContent = formatCurrency(product.price);
 
         const buyBtn = document.getElementById('modal-buy');
+        const shareBtn = document.getElementById('modal-share');
         const qrisArea = document.getElementById('qris-area');
         const qrisImage = document.getElementById('qris-image');
         const qrisStatus = document.getElementById('qris-status');
@@ -154,18 +153,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
         buyBtn.style.display = 'flex'; qrisArea.style.display = 'none'; qrisImage.style.display = 'none';
 
+        // Native Share Setup
+        shareBtn.onclick = () => {
+            playFeedback();
+            if (navigator.share) {
+                navigator.share({
+                    title: product.name,
+                    text: `Cek ${product.name} premium di SXR STORE!`,
+                    url: window.location.href
+                }).catch(console.error);
+            } else {
+                showToast("Share tidak didukung di browser ini.");
+            }
+        };
+
         buyBtn.onclick = () => {
             playFeedback();
-            buyBtn.style.display = 'none'; qrisArea.style.display = 'block'; qrisImage.src = 'qris-asli.png'; qrisImage.style.display = 'block';
-            qrisStatus.textContent = 'Scan QRIS untuk membayar'; qrisStatus.style.color = '#fff';
+            buyBtn.style.display = 'none'; 
+            shareBtn.style.display = 'none';
+            qrisArea.style.display = 'block'; 
+            qrisImage.src = 'qris-asli.png'; 
+            qrisImage.style.display = 'block';
+            qrisStatus.textContent = 'Scan QRIS untuk membayar'; 
             qrisTimer.textContent = 'Mendukung BCA, OVO, Dana, dll.';
 
             let waBtn = document.getElementById('btn-konfirmasi-wa');
             if (!waBtn) {
                 waBtn = document.createElement('button');
                 waBtn.id = 'btn-konfirmasi-wa';
-                waBtn.className = 'btn-primary ripple glow-btn';
-                waBtn.style.cssText = 'margin-top:20px; width:100%; background-color:#25D366; color:#fff; box-shadow:0 4px 15px rgba(37,211,102,0.2);';
+                waBtn.className = 'btn-primary ripple';
+                waBtn.style.cssText = 'margin-top:20px; width:100%; background-color:#25D366; color:#fff; border:none;';
                 waBtn.textContent = 'Kirim Bukti Pembayaran';
                 qrisArea.appendChild(waBtn);
             }
@@ -197,10 +214,13 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => toast.classList.add('show'), 10);
         setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 500); }, 3000);
     };
-    
-    document.getElementById('btn-login')?.addEventListener('click', () => showToast("Login fitur segera hadir."));
-    document.getElementById('btn-cart')?.addEventListener('click', () => showToast("Cart fitur segera hadir."));
-    document.getElementById('close-live')?.addEventListener('click', () => document.getElementById('live-panel').style.display = 'none');
+
+    const menuToggle = document.getElementById('menu-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+    if (menuToggle && mobileMenu) {
+        menuToggle.addEventListener('click', () => { playFeedback(); mobileMenu.classList.toggle('active'); });
+        document.querySelectorAll('.mobile-link').forEach(link => link.addEventListener('click', () => mobileMenu.classList.remove('active')));
+    }
 
     const attachRippleEvents = (container = document) => {
         container.querySelectorAll('.ripple').forEach(btn => {
@@ -217,17 +237,41 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    initCanvas(); 
     attachRippleEvents(document);
 
+    document.querySelectorAll('.accordion-header').forEach(header => {
+        header.addEventListener('click', () => {
+            playFeedback();
+            const body = header.nextElementSibling;
+            const isActive = header.classList.contains('active');
+            document.querySelectorAll('.accordion-header').forEach(h => h.classList.remove('active'));
+            document.querySelectorAll('.accordion-body').forEach(b => b.style.maxHeight = null);
+            if (!isActive) {
+                header.classList.add('active');
+                body.style.maxHeight = body.scrollHeight + "px";
+            }
+        });
+    });
+
+    // Page Transition & Loader
     setTimeout(() => {
         if (loaderEl) {
             loaderEl.style.opacity = '0';
             setTimeout(() => {
                 loaderEl.style.display = 'none';
                 renderProducts(DB_PRODUCTS);
-                showToast("Welcome to SXR STORE Premium");
             }, 600);
         }
-    }, 2000); // Intro logo duration
+    }, 1500); 
+
+    // Smooth Page exit transition
+    document.querySelectorAll('a[href^="http"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            if(link.target !== '_blank') {
+                e.preventDefault();
+                document.body.classList.add('fade-out');
+                setTimeout(() => window.location = link.href, 400);
+            }
+        });
+    });
 });
