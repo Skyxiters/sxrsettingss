@@ -1,18 +1,18 @@
 document.addEventListener('DOMContentLoaded', () => {
     const DB_PRODUCTS = [
-        { id: 1, name: "DragXIT Lite", category: "Android", price: 20000, img: "lite.png", badge: "" },
-        { id: 2, name: "DragXIT Basic", category: "Android", price: 50000, img: "basic.png", badge: "" },
-        { id: 3, name: "DragXIT Artic", category: "Android", price: 130000, img: "artic.png", badge: "HOT" },
-        { id: 4, name: "DragXIT Lunatic", category: "Android", price: 200000, img: "lunatic.png", badge: "PREMIUM" },
-        { id: 5, name: "Lite", category: "iPhone", price: 50000, img: "lite2.png", badge: "" },
-        { id: 6, name: "Pro", category: "iPhone", price: 100000, img: "pro.png", badge: "" },
-        { id: 7, name: "Premium", category: "iPhone", price: 200000, img: "premium.png", badge: "HOT" },
-        { id: 8, name: "Max", category: "iPhone", price: 300000, img: "max.png", badge: "PREMIUM" },
-        { id: 9, name: "Noctura", category: "App Panel", price: 50000, img: "sxr nocture.png", badge: "NEW" },
-        { id: 10, name: "Matrix", category: "App Panel", price: 130000, img: "matrix.png", badge: "" },
-        { id: 11, name: "Void Panel", category: "App Panel", price: 240000, img: "void panel.png", badge: "HOT" },
-        { id: 12, name: "Shadow V2", category: "App Panel", price: 300000, img: "shadow v2.png", badge: "PREMIUM" },
-        { id: 13, name: "Ignite Panel", category: "App Panel", price: 420000, img: "ignite panel.png", badge: "PREMIUM" }
+        { id: 1, name: "DragXIT Lite", category: "Android", price: 20000, img: "lite.png", badge: "DPI Optimized", specs: "No Root" },
+        { id: 2, name: "DragXIT Basic", category: "Android", price: 50000, img: "basic.png", badge: "Touch Tweaks", specs: "Stable" },
+        { id: 3, name: "DragXIT Artic", category: "Android", price: 130000, img: "artic.png", badge: "HOT", specs: "High FPS" },
+        { id: 4, name: "DragXIT Lunatic", category: "Android", price: 200000, img: "lunatic.png", badge: "PREMIUM", specs: "Pro Config" },
+        { id: 5, name: "Lite", category: "iPhone", price: 50000, img: "lite2.png", badge: "Smooth", specs: "Safe" },
+        { id: 6, name: "Pro", category: "iPhone", price: 100000, img: "pro.png", badge: "Fast Response", specs: "No Delay" },
+        { id: 7, name: "Premium", category: "iPhone", price: 200000, img: "premium.png", badge: "HOT", specs: "Tournament" },
+        { id: 8, name: "Max", category: "iPhone", price: 300000, img: "max.png", badge: "PREMIUM", specs: "Ultimate" },
+        { id: 9, name: "Noctura", category: "App Panel", price: 50000, img: "sxr nocture.png", badge: "NEW", specs: "Minimalist" },
+        { id: 10, name: "Matrix", category: "App Panel", price: 130000, img: "matrix.png", badge: "Secure", specs: "Encrypted" },
+        { id: 11, name: "Void Panel", category: "App Panel", price: 240000, img: "void panel.png", badge: "HOT", specs: "Advanced" },
+        { id: 12, name: "Shadow V2", category: "App Panel", price: 300000, img: "shadow v2.png", badge: "PREMIUM", specs: "Stealth" },
+        { id: 13, name: "Ignite Panel", category: "App Panel", price: 420000, img: "ignite panel.png", badge: "PREMIUM", specs: "Flagship" }
     ];
 
     const gridEl = document.getElementById('product-grid');
@@ -22,108 +22,94 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalEl = document.getElementById('modal');
     const modalCloseBtn = document.getElementById('modal-close');
     const navEl = document.getElementById('navbar');
-    const scrollProgEl = document.getElementById('scroll-progress');
-    const btnTopEl = document.getElementById('btn-top');
     const loaderEl = document.getElementById('loader');
-    const btnLogin = document.getElementById('btn-login');
-    const btnCart = document.getElementById('btn-cart');
     
-    const fallbackImage = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=";
-
-    const formatCurrency = (amount) => {
-        return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(amount);
+    // Audio Context API (Sensory tick sound)
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const playFeedback = () => {
+        if (navigator.vibrate) navigator.vibrate(30);
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 0.05);
+        gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.05);
     };
 
-    const mapCategoryKey = (dbCategory) => {
-        if (dbCategory === "Android") return "android";
-        if (dbCategory === "iPhone") return "iphone";
-        if (dbCategory === "App Panel") return "panel";
-        return "all";
-    };
+    const formatCurrency = (amount) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(amount);
+    const mapCategoryKey = (c) => c === "Android" ? "android" : c === "iPhone" ? "iphone" : c === "App Panel" ? "panel" : "all";
 
     const initCanvas = () => {
         const canvas = document.getElementById('spider-canvas');
         if (!canvas) return;
         const ctx = canvas.getContext('2d');
-        let width = canvas.width = window.innerWidth;
-        let height = canvas.height = window.innerHeight;
-        
+        let w = canvas.width = window.innerWidth;
+        let h = canvas.height = window.innerHeight;
         let stars = [];
-        const numStars = 500;
-        
-        for (let i = 0; i < numStars; i++) {
-            stars.push({
-                x: Math.random() * width - width / 2,
-                y: Math.random() * height - height / 2,
-                z: Math.random() * width,
-                size: Math.random() * 1.5 + 0.5
-            });
-        }
+        for (let i = 0; i < 400; i++) stars.push({ x: Math.random() * w - w / 2, y: Math.random() * h - h / 2, z: Math.random() * w, size: Math.random() * 1.5 });
         
         const animateCanvas = () => {
-            ctx.fillStyle = 'rgba(5, 5, 5, 0.3)';
-            ctx.fillRect(0, 0, width, height);
-            
-            const cx = width / 2;
-            const cy = height / 2;
-            
-            for (let i = 0; i < numStars; i++) {
+            ctx.fillStyle = 'rgba(5, 5, 5, 0.4)';
+            ctx.fillRect(0, 0, w, h);
+            const cx = w / 2; const cy = h / 2;
+            for (let i = 0; i < stars.length; i++) {
                 let star = stars[i];
                 star.z -= 1.5;
-                
-                if (star.z <= 0) {
-                    star.x = Math.random() * width - cx;
-                    star.y = Math.random() * height - cy;
-                    star.z = width;
-                }
-                
+                if (star.z <= 0) { star.x = Math.random() * w - cx; star.y = Math.random() * h - cy; star.z = w; }
                 let k = 150.0 / star.z;
-                let px = star.x * k + cx;
-                let py = star.y * k + cy;
-                
-                if (px >= 0 && px <= width && py >= 0 && py <= height) {
-                    let depthOpacity = (1 - star.z / width);
-                    let currentSize = star.size * k;
+                let px = star.x * k + cx; let py = star.y * k + cy;
+                if (px >= 0 && px <= w && py >= 0 && py <= h) {
                     ctx.beginPath();
-                    ctx.arc(px, py, currentSize, 0, Math.PI * 2);
-                    ctx.fillStyle = `rgba(0, 255, 255, ${depthOpacity})`;
+                    ctx.arc(px, py, star.size * k, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(0, 255, 255, ${1 - star.z / w})`;
                     ctx.fill();
                 }
             }
             requestAnimationFrame(animateCanvas);
         };
-        
-        window.addEventListener('resize', () => {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
-        });
-        
+        window.addEventListener('resize', () => { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; });
         animateCanvas();
+    };
+
+    const renderSkeletons = () => {
+        if (!gridEl) return;
+        gridEl.innerHTML = '';
+        for(let i=0; i<8; i++) {
+            gridEl.innerHTML += `
+                <div class="card skeleton-card">
+                    <div class="skeleton skeleton-img"></div>
+                    <div class="skeleton skeleton-text" style="width:40%; margin-bottom:10px;"></div>
+                    <div class="skeleton skeleton-text" style="width:80%; margin-bottom:15px; height:20px;"></div>
+                    <div class="skeleton skeleton-text" style="width:50%; margin-bottom:20px; height:24px;"></div>
+                    <div class="skeleton skeleton-btn"></div>
+                </div>`;
+        }
     };
 
     const renderProducts = (dataset) => {
         if (!gridEl) return;
         gridEl.innerHTML = '';
-        if (dataset.length === 0) {
-            gridEl.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: var(--color-text-muted); padding: 50px 0;">Produk tidak ditemukan.</p>`;
-            return;
-        }
+        if (dataset.length === 0) { gridEl.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #888;">Produk tidak ditemukan.</p>`; return; }
 
         dataset.forEach(item => {
-            const badgeHTML = item.badge ? `<div class="card-badge">${item.badge}</div>` : '';
             const card = document.createElement('div');
-            card.className = 'card reveal visible fade-anim';
+            card.className = 'card fade-anim glow-hover';
             card.setAttribute('data-category', mapCategoryKey(item.category));
-            card.style.display = 'flex'; 
-
             card.innerHTML = `
-                ${badgeHTML}
+                ${item.badge ? `<div class="card-badge">${item.badge}</div>` : ''}
                 <div class="card-image-box">
-                    <img src="${item.img}" alt="${item.name}" loading="lazy" onerror="this.onerror=null; this.src='${fallbackImage}';">
+                    <img src="${item.img}" alt="${item.name}" loading="lazy" onerror="this.onerror=null; this.src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';">
                 </div>
                 <div class="card-info">
                     <span class="card-cat">${item.category}</span>
                     <h3 class="card-title">${item.name}</h3>
+                    <div class="card-specs"><span>${item.specs}</span></div>
                     <div class="card-price">${formatCurrency(item.price)}</div>
                     <button class="btn-primary ripple glow-btn card-btn" data-id="${item.id}">Buy Now</button>
                 </div>
@@ -131,184 +117,90 @@ document.addEventListener('DOMContentLoaded', () => {
             gridEl.appendChild(card);
         });
         
-        attachCardEvents();
+        document.querySelectorAll('.card-btn').forEach(btn => btn.addEventListener('click', (e) => {
+            playFeedback(); openModal(parseInt(e.target.dataset.id));
+        }));
         attachRippleEvents(gridEl);
     };
 
     filterBtns.forEach(btn => {
         btn.addEventListener('click', (e) => {
+            playFeedback();
             filterBtns.forEach(b => b.classList.remove('active'));
             e.target.classList.add('active');
             const filterValue = e.target.dataset.filter;
-
-            if (searchInput && searchInput.value.trim() !== '') {
-                searchInput.value = '';
-                if(searchResults) searchResults.style.display = 'none';
-                renderProducts(DB_PRODUCTS); 
-            }
             
-            document.querySelectorAll('.product-grid .card').forEach(card => {
-                card.classList.remove('fade-anim');
-                if (filterValue === 'all' || card.dataset.category === filterValue) {
-                    card.style.display = 'flex'; 
-                    void card.offsetWidth; 
-                    card.classList.add('fade-anim');
-                } else {
-                    card.style.display = 'none'; 
-                }
-            });
+            renderSkeletons();
+            setTimeout(() => {
+                const filtered = filterValue === 'all' ? DB_PRODUCTS : DB_PRODUCTS.filter(p => mapCategoryKey(p.category) === filterValue);
+                renderProducts(filtered);
+            }, 400);
         });
     });
-
-    if (searchInput && searchResults) {
-        searchInput.addEventListener('input', (e) => {
-            const query = e.target.value.toLowerCase().trim();
-            searchResults.innerHTML = '';
-            
-            if (query.length > 0) {
-                const matches = DB_PRODUCTS.filter(p => p.name.toLowerCase().includes(query));
-                if (matches.length > 0) {
-                    searchResults.style.display = 'flex';
-                    matches.slice(0, 5).forEach(match => {
-                        const div = document.createElement('div');
-                        div.className = 'search-item';
-                        div.textContent = `${match.name} - ${match.category}`;
-                        div.addEventListener('click', () => {
-                            searchInput.value = match.name;
-                            searchResults.style.display = 'none';
-                            filterBtns.forEach(b => b.classList.remove('active'));
-                            document.querySelector('.filter-btn[data-filter="all"]').classList.add('active');
-                            renderProducts([match]);
-                        });
-                        searchResults.appendChild(div);
-                    });
-                } else {
-                    searchResults.style.display = 'none';
-                }
-                
-                filterBtns.forEach(b => b.classList.remove('active'));
-                document.querySelector('.filter-btn[data-filter="all"]').classList.add('active');
-                renderProducts(matches);
-            } else {
-                searchResults.style.display = 'none';
-                renderProducts(DB_PRODUCTS);
-            }
-        });
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('.search-wrapper')) searchResults.style.display = 'none';
-        });
-    }
-
-    const attachCardEvents = () => {
-        document.querySelectorAll('.card-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => openModal(parseInt(e.target.dataset.id)));
-        });
-    };
 
     const openModal = (id) => {
         const product = DB_PRODUCTS.find(p => p.id === id);
         if (!product || !modalEl) return;
-
         document.getElementById('modal-img').src = product.img;
-        document.getElementById('modal-img').onerror = function() { this.src = fallbackImage; };
         document.getElementById('modal-name').textContent = product.name;
         document.getElementById('modal-cat').textContent = product.category;
         document.getElementById('modal-price').textContent = formatCurrency(product.price);
 
         const buyBtn = document.getElementById('modal-buy');
         const qrisArea = document.getElementById('qris-area');
-        const qrisLoader = document.getElementById('qris-loader');
         const qrisImage = document.getElementById('qris-image');
         const qrisStatus = document.getElementById('qris-status');
         const qrisTimer = document.getElementById('qris-timer');
 
-        buyBtn.style.display = 'flex';
-        qrisArea.style.display = 'none';
-        qrisImage.style.display = 'none';
+        buyBtn.style.display = 'flex'; qrisArea.style.display = 'none'; qrisImage.style.display = 'none';
 
         buyBtn.onclick = () => {
-            buyBtn.style.display = 'none';
-            qrisArea.style.display = 'block';
-            if (qrisLoader) qrisLoader.style.display = 'none'; 
-            
-            qrisImage.src = 'qris-asli.png';
-            qrisImage.style.display = 'block';
-            
-            if (qrisStatus) {
-                qrisStatus.textContent = 'Scan QRIS untuk membayar';
-                qrisStatus.style.color = '#fff';
-            }
-            if (qrisTimer) qrisTimer.textContent = 'Mendukung BCA, OVO, Dana, GoPay, Spay, dll.';
+            playFeedback();
+            buyBtn.style.display = 'none'; qrisArea.style.display = 'block'; qrisImage.src = 'qris-asli.png'; qrisImage.style.display = 'block';
+            qrisStatus.textContent = 'Scan QRIS untuk membayar'; qrisStatus.style.color = '#fff';
+            qrisTimer.textContent = 'Mendukung BCA, OVO, Dana, dll.';
 
             let waBtn = document.getElementById('btn-konfirmasi-wa');
             if (!waBtn) {
                 waBtn = document.createElement('button');
                 waBtn.id = 'btn-konfirmasi-wa';
                 waBtn.className = 'btn-primary ripple glow-btn';
-                waBtn.style.marginTop = '20px';
-                waBtn.style.width = '100%';
-                waBtn.style.backgroundColor = '#25D366';
-                waBtn.style.boxShadow = '0 4px 15px rgba(37, 211, 102, 0.2)';
-                waBtn.style.color = '#fff';
+                waBtn.style.cssText = 'margin-top:20px; width:100%; background-color:#25D366; color:#fff; box-shadow:0 4px 15px rgba(37,211,102,0.2);';
                 waBtn.textContent = 'Kirim Bukti Pembayaran';
                 qrisArea.appendChild(waBtn);
             }
-
-            const nomorWA = "628216553262"; 
-            const teksPesan = `Halo SXR, saya sudah transfer untuk pembelian produk *${product.name}* seharga *${formatCurrency(product.price)}*. Berikut lampiran bukti pembayarannya.`;
-            
-            waBtn.onclick = () => {
-                window.open(`https://wa.me/${nomorWA}?text=${encodeURIComponent(teksPesan)}`, '_blank');
-            };
+            waBtn.onclick = () => { playFeedback(); window.open(`https://wa.me/628216553262?text=${encodeURIComponent(`Halo SXR, saya sudah transfer untuk pembelian produk *${product.name}* seharga *${formatCurrency(product.price)}*. Berikut lampiran bukti pembayarannya.`)}`, '_blank'); };
         };
-
-        modalEl.classList.add('active');
-        document.body.style.overflow = 'hidden';
+        modalEl.classList.add('active'); document.body.style.overflow = 'hidden';
     };
 
     const closeModal = () => {
         if(modalEl) { 
-            const modalContent = modalEl.querySelector('.modal-dialog');
-            if (window.innerWidth <= 768 && modalContent) {
-                modalContent.style.transform = 'translateY(100%)';
-                setTimeout(() => {
-                    modalEl.classList.remove('active'); 
-                    modalContent.style.transform = ''; 
-                    document.body.style.overflow = ''; 
-                }, 400); 
-            } else {
-                modalEl.classList.remove('active'); 
-                document.body.style.overflow = ''; 
-            }
+            const dialog = modalEl.querySelector('.modal-dialog');
+            if (window.innerWidth <= 768 && dialog) {
+                dialog.style.transform = 'translateY(100%)';
+                setTimeout(() => { modalEl.classList.remove('active'); dialog.style.transform = ''; document.body.style.overflow = ''; }, 400); 
+            } else { modalEl.classList.remove('active'); document.body.style.overflow = ''; }
         }
     };
-
-    if (modalCloseBtn) modalCloseBtn.addEventListener('click', closeModal);
+    if (modalCloseBtn) modalCloseBtn.addEventListener('click', () => { playFeedback(); closeModal(); });
     if (modalEl) modalEl.addEventListener('click', (e) => { if (e.target === modalEl || e.target.classList.contains('modal-dialog')) closeModal(); });
 
-    const closeLiveBtn = document.getElementById('close-live');
-    if (closeLiveBtn) closeLiveBtn.addEventListener('click', () => { document.getElementById('live-panel').style.display = 'none'; });
-
-    if (btnLogin) btnLogin.addEventListener('click', () => showToast("Login fitur segera hadir."));
-    if (btnCart) btnCart.addEventListener('click', () => showToast("Cart fitur segera hadir."));
-
-    const menuToggle = document.getElementById('menu-toggle');
-    const mobileMenu = document.getElementById('mobile-menu');
-    if (menuToggle && mobileMenu) {
-        menuToggle.addEventListener('click', () => mobileMenu.classList.toggle('active'));
-        document.querySelectorAll('.mobile-link').forEach(link => link.addEventListener('click', () => mobileMenu.classList.remove('active')));
-    }
-
-    window.addEventListener('scroll', () => {
-        const scrollY = window.scrollY;
-        if (navEl) { scrollY > 50 ? navEl.classList.add('scrolled') : navEl.classList.remove('scrolled'); }
-        if (scrollProgEl) {
-            const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            scrollProgEl.style.width = ((scrollY / docHeight) * 100) + '%';
-        }
-        if (btnTopEl) { scrollY > 500 ? btnTopEl.classList.add('active') : btnTopEl.classList.remove('active'); }
-    });
-    if (btnTopEl) btnTopEl.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    window.showToast = (message) => {
+        playFeedback();
+        const area = document.getElementById('toast-area');
+        if (!area) return;
+        const toast = document.createElement('div');
+        toast.className = 'toast dynamic-island';
+        toast.textContent = message;
+        area.appendChild(toast);
+        setTimeout(() => toast.classList.add('show'), 10);
+        setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 500); }, 3000);
+    };
+    
+    document.getElementById('btn-login')?.addEventListener('click', () => showToast("Login fitur segera hadir."));
+    document.getElementById('btn-cart')?.addEventListener('click', () => showToast("Cart fitur segera hadir."));
+    document.getElementById('close-live')?.addEventListener('click', () => document.getElementById('live-panel').style.display = 'none');
 
     const attachRippleEvents = (container = document) => {
         container.querySelectorAll('.ripple').forEach(btn => {
@@ -318,83 +210,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 const rect = this.getBoundingClientRect();
                 const ripple = document.createElement('span');
                 ripple.className = 'ripple-effect';
-                ripple.style.left = `${e.clientX - rect.left}px`;
-                ripple.style.top = `${e.clientY - rect.top}px`;
+                ripple.style.left = `${e.clientX - rect.left}px`; ripple.style.top = `${e.clientY - rect.top}px`;
                 this.appendChild(ripple);
                 setTimeout(() => ripple.remove(), 600);
             });
         });
     };
-
-    const observer = new IntersectionObserver((entries, obs) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-                obs.unobserve(entry.target);
-            }
-        });
-    }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
-    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
-    document.querySelectorAll('.accordion-header').forEach(header => {
-        header.addEventListener('click', () => {
-            const body = header.nextElementSibling;
-            const isActive = header.classList.contains('active');
-            document.querySelectorAll('.accordion-header').forEach(h => h.classList.remove('active'));
-            document.querySelectorAll('.accordion-body').forEach(b => b.style.maxHeight = null);
-            if (!isActive) {
-                header.classList.add('active');
-                body.style.maxHeight = body.scrollHeight + "px";
-            }
-        });
-    });
-
-    window.showToast = (message) => {
-        const area = document.getElementById('toast-area');
-        if (!area) return;
-        const toast = document.createElement('div');
-        toast.className = 'toast';
-        toast.textContent = message;
-        area.appendChild(toast);
-        setTimeout(() => toast.classList.add('show'), 10);
-        setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 400); }, 3000);
-    };
-
-    document.addEventListener('contextmenu', (e) => { e.preventDefault(); });
-
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'F12' || e.keyCode === 123) e.preventDefault();
-        if (e.ctrlKey) {
-            const key = e.key.toLowerCase();
-            if (key === 'u' || key === 's') e.preventDefault();
-            if (e.shiftKey && (key === 'i' || key === 'c' || key === 'j')) e.preventDefault();
-        }
-    });
-
-    const detectDevTools = () => {
-        const threshold = 160; 
-        const widthDiff = window.outerWidth - window.innerWidth > threshold;
-        const heightDiff = window.outerHeight - window.innerHeight > threshold;
-
-        if (widthDiff || heightDiff) {
-            document.body.style.filter = 'blur(20px)';
-            
-            if (!document.getElementById('dev-warning')) {
-                const warningBox = document.createElement('div');
-                warningBox.id = 'dev-warning';
-                warningBox.style.cssText = 'position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:rgba(229,9,20,0.95); color:#fff; padding:30px 40px; border-radius:15px; font-weight:800; z-index:999999; text-align:center; font-size:1.2rem; box-shadow:0 20px 50px rgba(0,0,0,0.8); pointer-events:auto; font-family:"Inter", sans-serif; letter-spacing:0.5px;';
-                warningBox.innerHTML = '⚠️ PERINGATAN KEAMANAN<br><span style="font-size:0.9rem; font-weight:500; display:block; margin-top:10px;">Harap tutup Panel Developer untuk melanjutkan akses.</span>';
-                document.documentElement.appendChild(warningBox);
-            }
-        } else {
-            document.body.style.filter = 'none';
-            const warningBox = document.getElementById('dev-warning');
-            if (warningBox) warningBox.remove();
-        }
-    };
-
-    window.addEventListener('resize', detectDevTools);
-    setInterval(detectDevTools, 1500);
 
     initCanvas(); 
     attachRippleEvents(document);
@@ -408,5 +229,5 @@ document.addEventListener('DOMContentLoaded', () => {
                 showToast("Welcome to SXR STORE Premium");
             }, 600);
         }
-    }, 1500); 
+    }, 2000); // Intro logo duration
 });
