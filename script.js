@@ -41,6 +41,66 @@ document.addEventListener('DOMContentLoaded', () => {
         return "all";
     };
 
+    const initCanvas = () => {
+        const canvas = document.getElementById('spider-canvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+        
+        let stars = [];
+        const numStars = 500;
+        
+        for (let i = 0; i < numStars; i++) {
+            stars.push({
+                x: Math.random() * width - width / 2,
+                y: Math.random() * height - height / 2,
+                z: Math.random() * width,
+                size: Math.random() * 1.5 + 0.5
+            });
+        }
+        
+        const animateCanvas = () => {
+            ctx.fillStyle = 'rgba(5, 5, 5, 0.3)';
+            ctx.fillRect(0, 0, width, height);
+            
+            const cx = width / 2;
+            const cy = height / 2;
+            
+            for (let i = 0; i < numStars; i++) {
+                let star = stars[i];
+                star.z -= 1.5;
+                
+                if (star.z <= 0) {
+                    star.x = Math.random() * width - cx;
+                    star.y = Math.random() * height - cy;
+                    star.z = width;
+                }
+                
+                let k = 150.0 / star.z;
+                let px = star.x * k + cx;
+                let py = star.y * k + cy;
+                
+                if (px >= 0 && px <= width && py >= 0 && py <= height) {
+                    let depthOpacity = (1 - star.z / width);
+                    let currentSize = star.size * k;
+                    ctx.beginPath();
+                    ctx.arc(px, py, currentSize, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(0, 255, 255, ${depthOpacity})`;
+                    ctx.fill();
+                }
+            }
+            requestAnimationFrame(animateCanvas);
+        };
+        
+        window.addEventListener('resize', () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        });
+        
+        animateCanvas();
+    };
+
     const renderProducts = (dataset) => {
         if (!gridEl) return;
         gridEl.innerHTML = '';
@@ -336,6 +396,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('resize', detectDevTools);
     setInterval(detectDevTools, 1500);
 
+    initCanvas(); 
     attachRippleEvents(document);
 
     setTimeout(() => {
