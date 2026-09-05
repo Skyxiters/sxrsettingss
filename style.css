@@ -33,14 +33,14 @@ body {
 ::-webkit-scrollbar-track { background: var(--color-bg); }
 ::-webkit-scrollbar-thumb { background-color: var(--color-primary); border-radius: 4px; }
 
-#spline-bg {
+#spider-canvas {
     position: fixed;
     top: 0; 
     left: 0;
     width: 100vw; 
     height: 100vh;
     z-index: 0;
-    pointer-events: auto;
+    pointer-events: none;
 }
 
 .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 2; pointer-events: none; }
