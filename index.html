@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SXR STORE | Premium Digital Products</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -11,9 +11,9 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <canvas id="spider-canvas"></canvas>
-
-    <div class="scroll-progress" id="scroll-progress"></div>
+    <div id="ptr-container" class="ptr-container">
+        <svg class="ptr-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v3m0 12v3m9-9h-3M6 12H3m15.364-6.364l-2.121 2.121M6.757 17.243l-2.121 2.121m12.728 0l-2.121-2.121M6.757 6.757L4.636 4.636"></path></svg>
+    </div>
 
     <div id="loader" class="loader-container">
         <div class="vertical-logo-box">
@@ -48,11 +48,9 @@
             <div class="nav-tools">
                 <div class="search-wrapper">
                     <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                    <input type="text" id="search-input" class="search-input" placeholder="Cari produk premium..." autocomplete="off">
+                    <input type="text" id="search-input" class="search-input" placeholder="Cari produk..." autocomplete="off">
                     <div id="search-results" class="search-results"></div>
                 </div>
-                <button class="btn-outline ripple" id="btn-login">Login</button>
-                <button class="btn-outline ripple" id="btn-cart">Cart</button>
             </div>
 
             <button class="menu-toggle ripple" id="menu-toggle" aria-label="Toggle Menu">
@@ -72,13 +70,12 @@
 
     <main>
         <section id="home" class="hero">
-            <div class="hero-glow"></div>
             <div class="container hero-content">
                 <span class="tagline reveal">TRUSTED BY MOBILE GAMERS</span>
                 <h1 class="hero-title">SXR STORE</h1>
                 <p class="hero-desc reveal">Premium Digital Products</p>
                 <div class="hero-actions reveal">
-                    <a href="#products" class="btn-primary ripple glow-btn">Explore Collection</a>
+                    <a href="#products" class="btn-primary ripple">Explore Collection</a>
                     <a href="#contact" class="btn-outline ripple">Hubungi Kami</a>
                 </div>
             </div>
@@ -90,7 +87,7 @@
                     <span class="promo-badge">HOT RELEASE</span>
                     <h2 class="promo-title">DRAGXIT OB54 SXRSETTINGS</h2>
                     <p class="promo-desc">The ultimate performance upgrade is now available for Pre-Order.</p>
-                    <a href="#products" class="btn-primary ripple glow-btn" style="padding: 10px 30px; font-size: 0.95rem;">Pre-Order Now</a>
+                    <a href="#products" class="btn-primary ripple" style="padding: 10px 30px; font-size: 0.95rem;">Pre-Order Now</a>
                 </div>
             </div>
         </section>
@@ -100,7 +97,7 @@
                 <div class="section-header reveal">
                     <div>
                         <h2 class="section-title">Katalog Premium</h2>
-                        <p class="section-subtitle">🔥 Featured Products | ⭐ Best Seller | 🆕 New Arrival</p>
+                        <p class="section-subtitle">Swipe untuk melihat produk</p>
                     </div>
                     <div class="filters" id="filters">
                         <button class="filter-btn active ripple" data-filter="all">All</button>
@@ -114,7 +111,7 @@
             </div>
         </section>
 
-        <section id="contact" class="section reveal" style="background: rgba(10,10,10,0.5); border-top: 1px solid rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <section id="contact" class="section reveal" style="border-top: 1px solid rgba(255,255,255,0.03); border-bottom: 1px solid rgba(255,255,255,0.03);">
             <div class="container contact-grid">
                 <div class="social-box">
                     <h2 class="section-title">Connect With Us</h2>
@@ -150,7 +147,7 @@
                     <div class="contact-card">
                         <h3>WhatsApp Admin</h3>
                         <p class="wa-number">0821-6553-262</p>
-                        <a href="https://wa.me/628216553262" target="_blank" class="btn-primary ripple glow-btn w-100 mt-3">💬 Chat WhatsApp</a>
+                        <a href="https://wa.me/628216553262" target="_blank" class="btn-primary ripple w-100 mt-3">💬 Chat WhatsApp</a>
                     </div>
                 </div>
             </div>
@@ -196,7 +193,6 @@
                 <a href="https://wa.me/628216553262" target="_blank">WhatsApp</a>
                 <a href="https://www.tiktok.com/@sxrsettingofficial" target="_blank">TikTok</a>
                 <a href="https://youtube.com/@skyxiters1?si=2LdkYtvCD8J6rkZ7" target="_blank">YouTube</a>
-                <a href="https://whatsapp.com/channel/0029VajD0Cn90x2mGjjTyM0J" target="_blank">WhatsApp Channel</a>
             </div>
         </div>
         <div class="footer-bottom">
@@ -204,19 +200,11 @@
         </div>
     </footer>
 
-    <div class="live-panel float-anim" id="live-panel">
-        <button class="close-live" id="close-live">&times;</button>
-        <div class="live-badge">🔴 LIVE TIKTOK</div>
-        <h4>Support Project</h4>
-        <p>❤️ Donate via Sociabuzz</p>
-        <a href="https://sociabuzz.com/skygpx/tribe" target="_blank" class="btn-primary ripple btn-sm w-100 glow-btn" style="margin-top: 10px; font-size:0.8rem; padding: 8px;">DONATE SEKARANG</a>
-    </div>
-
-    <a href="https://wa.me/628216553262" target="_blank" class="float-wa ripple glow-btn" aria-label="WhatsApp Support">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    <a href="https://wa.me/628216553262" target="_blank" class="float-wa ripple" aria-label="WhatsApp Support">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
     </a>
-    <button id="btn-top" class="float-top ripple glow-btn" aria-label="Scroll to top">↑</button>
 
+    <!-- BOTTOM SHEET MODAL -->
     <div id="modal" class="modal">
         <div class="modal-dialog">
             <button class="modal-close" id="modal-close">&times;</button>
@@ -229,11 +217,16 @@
                     <h3 class="modal-title" id="modal-name"></h3>
                     <div class="modal-price" id="modal-price"></div>
                     
-                    <button id="modal-buy" class="btn-primary ripple glow-btn w-100">⚡ Bayar Otomatis via QRIS</button>
+                    <div class="modal-actions">
+                        <button id="modal-buy" class="btn-primary ripple" style="flex:1;">⚡ Bayar Otomatis</button>
+                        <button id="modal-share" class="btn-outline ripple" style="width: 50px; display:flex; align-items:center; justify-content:center;" aria-label="Share">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>
+                        </button>
+                    </div>
                     
                     <div id="qris-area" style="display: none; text-align: center; margin-top: 20px;">
-                        <img id="qris-image" src="" alt="QRIS Code" style="display: none; max-width: 200px; margin: 0 auto; border-radius: 12px; border: 2px solid var(--color-border); padding: 10px; background: #fff;">
-                        <p id="qris-status" style="margin-top: 15px; font-size: 0.9rem; font-weight: 600; color: #ffcc00;">Memuat QRIS...</p>
+                        <img id="qris-image" src="" alt="QRIS Code">
+                        <p id="qris-status" style="margin-top: 15px; font-size: 0.9rem; font-weight: 600; color: #fff;">Memuat QRIS...</p>
                         <p id="qris-timer" style="font-size: 0.8rem; color: var(--color-text-muted); margin-top: 5px;"></p>
                     </div>
                 </div>
